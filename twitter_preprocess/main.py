@@ -43,6 +43,7 @@ for msg in consumer:
     tweet['day'] = int(date[8:10])
     tweet['hour'] = int(date[11:13])
     tweet['month'] = date[4:7]
+    tweet['minute'] = int(date[14:16])
     tweet['constant'] = '1'
     Text = text
 
