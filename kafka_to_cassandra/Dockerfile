@@ -6,7 +6,9 @@ RUN pip install tweepy==3.10.0
 RUN pip install numpy==1.19.3
 RUN pip install pandas==1.1.5
 RUN pip install sklearn==0.0
-RUN pip install hazm==0.7.0
+RUN pip install elasticsearch==7.13.3
+RUN pip install cassandra-driver==3.25.0
+
 COPY ./ /
 WORKDIR /
 

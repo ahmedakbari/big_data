@@ -1,5 +1,21 @@
-version: '2.3'
+version: '2'
+
 services:
+  cassandra:
+    container_name: cassandra
+    image: cassandra:latest
+    hostname: cassandra
+    volumes:
+      - /Users/caitlincjohnson/github/udacity/project_cassandra/cassandra/var/lib/cassandra/data
+    ports:
+      - 9042:9042
+    environment:
+      - CASSANDRA_START_RPC=true
+      - CASSANDRA_CLUSTER_NAME=MyCluster
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_DC=datacenter
+      - CASSANDRA_RPC_ADDRESS=0.0.0.0
+  
   zookeeper:
     image: zookeeper
     hostname: zookeeper
@@ -34,11 +50,32 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.3
+    container_name: "elasticsearch"
+    ports:
+      - 9200:9200
+    environment:
+      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+      discovery.type: "single-node"
+      node.store.allow_mmap: "false"
+
   redis:
     container_name: redis-integration-test-ar
     image: redis:5.0.4
     ports:
       - "6379:6379"
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.10.1
+    container_name: kibana
+    depends_on:
+      - elasticsearch
+    ports:
+      - 5601:5601
+    environment:
+      discovery.type: "single-node"
+     
 
   twitter_fetcher:
     container_name: twitter_fetcher
@@ -48,4 +85,12 @@ services:
     container_name: twitter_preprocess
     build: ./twitter_preprocess
 #    command: sh -c "python -u twitter_crowler.py"
+
+  kafka_to_elastic:
+    container_name: kafka_to_elastic
+    build: ./kafka_to_elastic
+
+  kafka_to_cassandra:
+    container_name: kafka_to_cassandra
+    build: ./kafka_to_cassandra
 

@@ -18,7 +18,6 @@ class NumpyArrayEncoder(JSONEncoder):
 
 producer = KafkaProducer(bootstrap_servers='kafka:9092')
 
-
 t_crowler = twitter_crowler()
 
 running = True
@@ -35,4 +34,3 @@ for message in t_crowler.crowl():
     future = producer.send('preprocess', tweet)
     result = future.get(timeout=60)
     time.sleep(1)
-
