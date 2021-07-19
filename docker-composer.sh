@@ -9,3 +9,4 @@ sleep 5
 docker-compose up -d --build kafka_to_elastic
 sleep 90
 docker-compose up  --build kafka_to_cassandra
+
