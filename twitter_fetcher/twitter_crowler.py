@@ -1,5 +1,7 @@
+import sys
 import time
 import json
+import traceback
 import uuid
 import tweepy
 # assuming twitter_authentication.py contains each of the 4 oauth elements (1 per line)
@@ -39,7 +41,8 @@ class twitter_crowler():
                             pass
                         # print(len(tweets_for_10k),tweet['full_text'].replace("\n"," "))
                         yield tweet
-                except:
+                except TypeError as e:
+                    traceback.print_exc(file=sys.stdout)
                     print("sleep 60 seconds")
                     time.sleep(60)
                 time.sleep(0.5)
