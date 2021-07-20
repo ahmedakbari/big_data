@@ -128,3 +128,4 @@ for message in consumer:
             session.execute(prepared3, (msg['month'], msg['day'], msg['hour'], msg['minute'], msg['keyword'][j], msg['id'], msg['user']['screen_name']))
     session.execute(prepared4, (msg['month'], msg['day'], msg['hour'], msg['minute'], msg['id'], msg['user']['screen_name']))
     session.execute(prepared5, (msg['month'], msg['day'], msg['hour'], msg['minute'], msg['id'], msg['constant'], msg['user']['screen_name']))
+
