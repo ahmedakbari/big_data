@@ -1,5 +1,4 @@
-version: '2'
-
+version: '2.3'
 services:
   cassandra:
     container_name: cassandra
@@ -49,9 +48,8 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
-
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.3
+    image: elasticsearch:7.13.3
     container_name: "elasticsearch"
     ports:
       - 9200:9200
@@ -61,13 +59,13 @@ services:
       node.store.allow_mmap: "false"
 
   redis:
-    container_name: redis-integration-test-ar
+    container_name: redis
     image: redis:5.0.4
     ports:
       - "6379:6379"
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.10.1
+    image: kibana:7.10.1
     container_name: kibana
     depends_on:
       - elasticsearch
@@ -75,7 +73,25 @@ services:
       - 5601:5601
     environment:
       discovery.type: "single-node"
+
+
+  clickhouse:
+    container_name: clickhouse
+    image: yandex/clickhouse-server:21.7.4.18-alpine
+    ports:
+      - 8123:8123
+      - 9000:9000
+
      
+
+  superset:
+    container_name: superset
+    image: superset
+    ports:
+      - 8080:8088
+    
+
+
 
   twitter_fetcher:
     container_name: twitter_fetcher
@@ -94,3 +110,18 @@ services:
     container_name: kafka_to_cassandra
     build: ./kafka_to_cassandra
 
+  kafka_to_redis:
+    container_name: kafka_to_redis
+    build: ./kafka_to_redis
+
+  fastapi_to_redis:
+    container_name: fastapi_to_redis
+    build: ./fastapi_to_redis
+    ports:
+      - 8086:80
+
+
+
+  kafka_to_clickhouse:
+    container_name: kafka_to_clickhouse
+    build: ./kafka_to_clickhouse
