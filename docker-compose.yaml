@@ -1,9 +1,10 @@
-version: '2'
-
+version: '2.3'
 services:
+<<<<<<< Updated upstream
+=======
   cassandra:
     container_name: cassandra
-    image: cassandra:latest
+    image: docker.mci.dev/cassandra:latest
     hostname: cassandra
     volumes:
       - /Users/caitlincjohnson/github/udacity/project_cassandra/cassandra/var/lib/cassandra/data
@@ -16,8 +17,9 @@ services:
       - CASSANDRA_DC=datacenter
       - CASSANDRA_RPC_ADDRESS=0.0.0.0
   
+>>>>>>> Stashed changes
   zookeeper:
-    image: zookeeper
+    image: docker.mci.dev/zookeeper
     hostname: zookeeper
     container_name: "zookeeper"
     restart: always
@@ -28,7 +30,7 @@ services:
 
   kafka:
     container_name: "kafka"
-    image: wurstmeister/kafka:2.12-2.5.0
+    image: docker.mci.dev/wurstmeister/kafka:2.12-2.5.0
     hostname: kafka
     ports:
       - "9092:9092"
@@ -50,8 +52,10 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
 
+<<<<<<< Updated upstream
+=======
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.3
+    image: docker.mci.dev/docker.elastic.co/elasticsearch/elasticsearch:7.13.3
     container_name: "elasticsearch"
     ports:
       - 9200:9200
@@ -60,14 +64,17 @@ services:
       discovery.type: "single-node"
       node.store.allow_mmap: "false"
 
+>>>>>>> Stashed changes
   redis:
-    container_name: redis-integration-test-ar
-    image: redis:5.0.4
+    container_name: redis
+    image: docker.mci.dev/redis:5.0.4
     ports:
       - "6379:6379"
 
+<<<<<<< Updated upstream
+=======
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.10.1
+    image: docker.mci.dev/docker.elastic.co/kibana/kibana:7.10.1
     container_name: kibana
     depends_on:
       - elasticsearch
@@ -75,8 +82,27 @@ services:
       - 5601:5601
     environment:
       discovery.type: "single-node"
+
+
+  clickhouse:
+    container_name: clickhouse
+    image: docker.mci.dev/yandex/clickhouse-server
+    ports:
+      - 8123:8123
+      - 9000:9000
+
      
 
+  superset:
+    container_name: superset
+    image: docker.mci.dev/apache/superset
+    ports:
+      - 8080:8088
+    
+
+
+
+>>>>>>> Stashed changes
   twitter_fetcher:
     container_name: twitter_fetcher
     build: ./twitter_fetcher
@@ -86,11 +112,29 @@ services:
     build: ./twitter_preprocess
 #    command: sh -c "python -u twitter_crowler.py"
 
-  kafka_to_elastic:
-    container_name: kafka_to_elastic
-    build: ./kafka_to_elastic
+<<<<<<< Updated upstream
+=======
+#  kafka_to_elastic:
+#    container_name: kafka_to_elastic
+#    build: ./kafka_to_elastic
 
-  kafka_to_cassandra:
-    container_name: kafka_to_cassandra
-    build: ./kafka_to_cassandra
+#  kafka_to_cassandra:
+#    container_name: kafka_to_cassandra
+#    build: ./kafka_to_cassandra
 
+  kafka_to_redis:
+    container_name: kafka_to_redis
+    build: ./kafka_to_redis
+
+  fastapi_to_redis:
+    container_name: fastapi_to_redis
+    build: ./fastapi_to_redis
+    ports:
+      - 8086:80
+
+
+
+  kafka_to_clickhouse:
+    container_name: kafka_to_clickhouse
+    build: ./kafka_to_clickhouse
+>>>>>>> Stashed changes
