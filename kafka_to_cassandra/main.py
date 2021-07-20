@@ -29,8 +29,10 @@ session.execute("""
                     month text,
                     day int,
                     hour int,
+                    minute int,
                     id bigint,
-                    primary key((month, day), hour)
+                    user_name text,
+                    primary key((month, day), hour, minute, user_name)
                     ) WITH CLUSTERING ORDER BY (hour DESC)
                      """)
 
@@ -40,9 +42,11 @@ session.execute("""
                        month text,
                        day int,
                        hour int,
+                       minute int,
                        hashtag text,
                        id bigint,
-                       primary key(hashtag, month, day, hour)
+                       user_name text,
+                       primary key(hashtag, month, day, hour, minute, user_name)
                     ) WITH CLUSTERING ORDER BY (month DESC, day DESC, hour DESC)
                     """)
 
@@ -52,9 +56,11 @@ session.execute("""
                        month text,
                        day int,
                        hour int,
+                       minute int,
                        keywords text,
                        id bigint,
-                       primary key(keywords, month, day, hour)
+                       user_name text,
+                       primary key(keywords, month, day, hour, minute, user_name)
                        ) WITH CLUSTERING ORDER BY (month DESC, day DESC, hour DESC)
                     """)
 
@@ -64,8 +70,10 @@ session.execute("""
                        month text,
                        day int,
                        hour int,
+                       minute int,
                        id bigint,
-                       primary key(id, month, day, hour)
+                       user_name text,
+                       primary key(user_name, month, day, hour, minute)
                        ) WITH CLUSTERING ORDER BY (month DESC, day DESC, hour DESC)
                     """)
 
@@ -75,32 +83,34 @@ session.execute("""
                        month text,
                        day int,
                        hour int,
+                       minute int,
                        id bigint,
                        constant text,
-                       primary key(constant, month, day, hour)
+                       user_name text,
+                       primary key(constant, month, day, hour, minute, user_name)
                        )
                     """)
 print("created table...")
 
 prepared1 = session.prepare("""
-                                INSERT INTO Date (month, day, hour, id)
-                                VALUES (?, ?, ?, ?)
+                                INSERT INTO Date (month, day, hour, minute, id, user_name)
+                                VALUES (?, ?, ?, ?, ?, ?)
                                 """)
 prepared2 = session.prepare("""
-                                INSERT INTO Hashtag (month, day, hour, hashtag, id)
-                                VALUES (?, ?, ?, ?, ?)
+                                INSERT INTO Hashtag (month, day, hour, minute, hashtag, id, user_name)
+                                VALUES (?, ?, ?, ?, ?, ?, ?)
                                 """)
 prepared3 = session.prepare("""
-                                INSERT INTO Keywords (month, day, hour, keywords, id)
-                                VALUES (?, ?, ?, ?, ?)
+                                INSERT INTO Keywords (month, day, hour, minute, keywords, id, user_name)
+                                VALUES (?, ?, ?, ?, ?, ?, ?)
                                 """)
 prepared4 = session.prepare("""
-                                INSERT INTO UserName (month, day, hour, id)
-                                VALUES (?, ?, ?, ?)
+                                INSERT INTO UserName (month, day, hour, minute, id, user_name)
+                                VALUES (?, ?, ?, ?, ?, ?)
                                 """)
 prepared5 = session.prepare("""
-                                INSERT INTO All (month, day, hour, id, constant)
-                                VALUES (?, ?, ?, ?, ?)
+                                INSERT INTO All (month, day, hour, minute, id, constant, user_name)
+                                VALUES (?, ?, ?, ?, ?, ?, ?)
                                 """)
 
 for message in consumer:
@@ -109,12 +119,12 @@ for message in consumer:
     ll = len(msg['hashtag'])
     kk = len(msg['keyword'])
 
-    session.execute(prepared1, (msg['month'], msg['day'], msg['hour'], msg['id']))
+    session.execute(prepared1, (msg['month'], msg['day'], msg['hour'], msg['minute'], msg['id'], msg['user']['screen_name']))
     if ll >= 1:
         for i in range(1, ll):
-            session.execute(prepared2, (msg['month'],msg['day'],msg['hour'],msg['hashtag'][i],msg['id']))
+            session.execute(prepared2, (msg['month'], msg['day'], msg['hour'], msg['minute'], msg['hashtag'][i],msg['id'], msg['user']['screen_name']))
     if kk >= 1:
         for j in range(1, kk):
-            session.execute(prepared3, (msg['month'],msg['day'],msg['hour'],msg['keyword'][j],msg['id']))
-    session.execute(prepared4, (msg['month'],msg['day'],msg['hour'],msg['id']))
-    session.execute(prepared5, (msg['month'],msg['day'],msg['hour'],msg['id'],msg['constant']))
+            session.execute(prepared3, (msg['month'], msg['day'], msg['hour'], msg['minute'], msg['keyword'][j], msg['id'], msg['user']['screen_name']))
+    session.execute(prepared4, (msg['month'], msg['day'], msg['hour'], msg['minute'], msg['id'], msg['user']['screen_name']))
+    session.execute(prepared5, (msg['month'], msg['day'], msg['hour'], msg['minute'], msg['id'], msg['constant'], msg['user']['screen_name']))
