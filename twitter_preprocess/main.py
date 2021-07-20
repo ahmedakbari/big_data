@@ -26,6 +26,8 @@ class NumpyArrayEncoder(JSONEncoder):
         return JSONEncoder.default(self, obj)
 
 
+keyword_list = ['بورس','اقتصاد','تحریم','دولت','حسن روحانی','انتخاب','دلار','طلا','کرونا','کوید 19','کووید 19','تورم','دانشگاه']
+
 producer = KafkaProducer(bootstrap_servers='kafka:9092')
 consumer = KafkaConsumer('preprocess', bootstrap_servers='kafka:9092', group_id='per_process_consumer')
 keyword_extractor = keyword_extraction()
@@ -36,7 +38,7 @@ for msg in consumer:
     tweet['hashtag'] = re.findall(r"#(\w+)", text)
     tweet['url'] = re.findall(r'http\S+', text)
     tweet['mention'] = re.findall(r'@(\S+)', text)
-    tweet['keyword'] = keyword_extractor.extract(tweet)
+    keywordsa = keyword_extractor.extract(tweet)
 
     ############################################
     date = tweet['created_at']
@@ -63,7 +65,15 @@ for msg in consumer:
         tokenized_sms[j] = stemmer.stem(tokenized_sms[j])
     Text = " ".join(tokenized_sms)
     tweet['word'] = Text.split()
+    AA = Text.split()
+    keywordsb = []
+    if len(AA) >= 1:
+        for i in range(1,len(AA)):
+            if AA[i] in keyword_list:
+                keywordsb.append(AA[i])
+                print(AA[i])
 
+    tweet['keyword'] = keywordsb+keywordsa
     ############################################
 
     tweet = json.dumps(tweet, cls=NumpyArrayEncoder).encode('utf-8')
